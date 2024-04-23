@@ -153,6 +153,7 @@ YOUR COMMAND:
 """
 
 black_listed_elements = set(["html", "head", "title", "meta", "iframe", "body", "script", "style", "path", "svg", "br", "::marker",])
+AGENT_NAME = "crawler"
 
 class Crawler:
 	def __init__(self):
@@ -497,7 +498,7 @@ def start_interaction(model_id, objective, project_name):
 		prompt = prompt.replace("$url", url[:100])
 		prompt = prompt.replace("$previous_command", previous_command)
 		prompt = prompt.replace("$browser_content", browser_content[:4500])
-		response = LLM(model_id=model_id).inference(prompt)
+		response = LLM(model_id=model_id).inference(prompt, project_name, AGENT_NAME)
 		return response
 
 	def run_cmd(cmd):

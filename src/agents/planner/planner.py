@@ -3,6 +3,7 @@ from jinja2 import Environment, BaseLoader
 from src.llm import LLM
 
 PROMPT = open("src/agents/planner/prompt.jinja2").read().strip()
+AGENT_NAME = "planner"
 
 class Planner:
     def __init__(self, base_model: str):
@@ -67,5 +68,5 @@ class Planner:
 
     def execute(self, prompt: str, project_name: str) -> str:
         prompt = self.render(prompt)
-        response = self.llm.inference(prompt, project_name)
+        response = self.llm.inference(prompt, project_name, AGENT_NAME)
         return response

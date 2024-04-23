@@ -76,7 +76,7 @@ class LLM:
         total = agentState.get_latest_token_usage(project_name) + token_usage
         emit_agent("tokens", {"token_usage": total})
 
-    def inference(self, prompt: str, project_name: str) -> str:
+    def inference(self, prompt: str, project_name: str, agent_name: str) -> str:
         self.update_global_token_usage(prompt, project_name)
 
         model_enum = self.model_id_to_enum_mapping().get(self.model_id)
@@ -100,7 +100,8 @@ class LLM:
             raise ValueError(f"Model {model_enum} not supported")
 
         if self.log_prompts:
-            logger.debug(f"Response ({model}): --> {response}")
+            logger.debug(f"{agent_name} Prompt ({model}): --> {prompt}")
+            logger.debug(f"{agent_name} Response ({model}): --> {response}")
 
         self.update_global_token_usage(response, project_name)
 

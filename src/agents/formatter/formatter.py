@@ -3,6 +3,7 @@ from jinja2 import Environment, BaseLoader
 from src.llm import LLM
 
 PROMPT = open("src/agents/formatter/prompt.jinja2").read().strip()
+AGENT_NAME = "formatter"
 
 class Formatter:
     def __init__(self, base_model: str):
@@ -18,5 +19,5 @@ class Formatter:
 
     def execute(self, raw_text: str, project_name: str) -> str:
         raw_text = self.render(raw_text)
-        response = self.llm.inference(raw_text, project_name)
+        response = self.llm.inference(raw_text, project_name, AGENT_NAME)
         return response

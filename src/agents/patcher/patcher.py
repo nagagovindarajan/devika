@@ -8,7 +8,8 @@ from src.config import Config
 from src.llm import LLM
 from src.state import AgentState
 
-PROMPT = open("src/agents/patcher/prompt.jinja2", "r").read().strip()
+PROMPT = open("src/agents/patcher/promptV2.jinja2", "r").read().strip()
+AGENT_NAME = "patcher"
 
 class Patcher:
     def __init__(self, base_model: str):
@@ -38,9 +39,9 @@ class Patcher:
     def validate_response(self, response: str) -> Union[List[Dict[str, str]], bool]:
         response = response.strip()
 
-        response = response.split("~~~", 1)[1]
-        response = response[:response.rfind("~~~")]
-        response = response.strip()
+        # response = response.split("~~~", 1)[1]
+        # response = response[:response.rfind("~~~")]
+        # response = response.strip()
 
         result = []
         current_file = None
@@ -83,7 +84,8 @@ class Patcher:
 
     def response_to_markdown_prompt(self, response: List[Dict[str, str]]) -> str:
         response = "\n".join([f"File: `{file['file']}`:\n```\n{file['code']}\n```" for file in response])
-        return f"~~~\n{response}\n~~~"
+        # return f"~~~\n{response}\n~~~"
+        return f"\n{response}\n"
 
     def emulate_code_writing(self, code_set: list, project_name: str):
         for current_file in code_set:
@@ -114,12 +116,12 @@ class Patcher:
             error,
             system_os
         )
-        response = self.llm.inference(prompt, project_name)
+        response = self.llm.inference(prompt, project_name, AGENT_NAME)
         
         valid_response = self.validate_response(response)
         
         while not valid_response:
-            print("Invalid response from the model, trying again...")
+            print(AGENT_NAME, "Invalid response from the model, trying again...")
             return self.execute(
                 conversation,
                 code_markdown,

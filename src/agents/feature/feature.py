@@ -8,8 +8,8 @@ from src.config import Config
 from src.llm import LLM
 from src.state import AgentState
 
-PROMPT = open("src/agents/feature/prompt.jinja2", "r").read().strip()
-
+PROMPT = open("src/agents/feature/promptV2.jinja2", "r").read().strip()
+AGENT_NAME = "feature"
 
 class Feature:
     def __init__(self, base_model: str):
@@ -32,12 +32,12 @@ class Feature:
             system_os=system_os
         )
 
-    def validate_response(self, response: str) -> Union[List[Dict[str, str]], bool]:
+    def validate_response(response: str) -> Union[List[Dict[str, str]], bool]:
         response = response.strip()
 
-        response = response.split("~~~", 1)[1]
-        response = response[:response.rfind("~~~")]
-        response = response.strip()
+        # response = response.split("~~~", 1)[1]
+        # response = response[:response.rfind("~~~")]
+        # response = response.strip()
 
         result = []
         current_file = None
@@ -81,7 +81,8 @@ class Feature:
 
     def response_to_markdown_prompt(self, response: List[Dict[str, str]]) -> str:
         response = "\n".join([f"File: `{file['file']}`:\n```\n{file['code']}\n```" for file in response])
-        return f"~~~\n{response}\n~~~"
+        # return f"~~~\n{response}\n~~~"
+        return f"\n{response}\n"
 
     def emulate_code_writing(self, code_set: list, project_name: str):
         for file in code_set:
@@ -104,13 +105,14 @@ class Feature:
         project_name: str
     ) -> str:
         prompt = self.render(conversation, code_markdown, system_os)
-        response = self.llm.inference(prompt, project_name)
+        response = self.llm.inference(prompt, project_name, AGENT_NAME)
         
         valid_response = self.validate_response(response)
         
         while not valid_response:
-            print("Invalid response from the model, trying again...")
+            print(AGENT_NAME, "Invalid response from the model, trying again...")
             return self.execute(conversation, code_markdown, system_os, project_name)
+        print(valid_response)
         
         self.emulate_code_writing(valid_response, project_name)
 

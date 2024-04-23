@@ -6,7 +6,7 @@ from src.config import Config
 from src.llm import LLM
 
 PROMPT = open("src/agents/action/prompt.jinja2", "r").read().strip()
-
+AGENT_NAME = "action"
 class Action:
     def __init__(self, base_model: str):
         config = Config()
@@ -41,12 +41,12 @@ class Action:
 
     def execute(self, conversation: list, project_name: str) -> str:
         prompt = self.render(conversation)
-        response = self.llm.inference(prompt, project_name)
+        response = self.llm.inference(prompt, project_name, AGENT_NAME)
         
         valid_response = self.validate_response(response)
         
         while not valid_response:
-            print("Invalid response from the model, trying again...")
+            print(AGENT_NAME, "Invalid response from the model, trying again...")
             return self.execute(conversation, project_name)
         
         print("===" * 10)

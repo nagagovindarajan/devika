@@ -7,7 +7,7 @@ from src.llm import LLM
 from src.browser.search import BingSearch
 
 PROMPT = open("src/agents/researcher/prompt.jinja2").read().strip()
-
+AGENT_NAME = "reseacher"
 
 class Researcher:
     def __init__(self, base_model: str):
@@ -46,12 +46,12 @@ class Researcher:
         contextual_keywords_str = ", ".join(map(lambda k: k.capitalize(), contextual_keywords))
         prompt = self.render(step_by_step_plan, contextual_keywords_str)
         
-        response = self.llm.inference(prompt, project_name)
+        response = self.llm.inference(prompt, project_name, AGENT_NAME)
         
         valid_response = self.validate_response(response)
 
         while not valid_response:
-            print("Invalid response from the model, trying again...")
+            print(AGENT_NAME, "Invalid response from the model, trying again...")
             return self.execute(step_by_step_plan, contextual_keywords, project_name)
 
         return valid_response

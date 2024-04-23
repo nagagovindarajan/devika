@@ -5,6 +5,7 @@ from jinja2 import Environment, BaseLoader
 from src.llm import LLM
 
 PROMPT = open("src/agents/reporter/prompt.jinja2").read().strip()
+AGENT_NAME = "reporter"
 
 class Reporter:
     def __init__(self, base_model: str):
@@ -32,12 +33,12 @@ class Reporter:
         project_name: str
     ) -> str:
         prompt = self.render(conversation, code_markdown)
-        response = self.llm.inference(prompt, project_name)
+        response = self.llm.inference(prompt, project_name, AGENT_NAME)
         
         valid_response = self.validate_response(response)
         
         while not valid_response:
-            print("Invalid response from the model, trying again...")
+            print(AGENT_NAME, "Invalid response from the model, trying again...")
             return self.execute(conversation, code_markdown, project_name)
 
         return valid_response
