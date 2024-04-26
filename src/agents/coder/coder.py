@@ -8,6 +8,7 @@ from src.config import Config
 from src.llm import LLM
 from src.state import AgentState
 from src.logger import Logger
+from src.services.utils import retry_wrapper
 
 PROMPT = open("src/agents/coder/promptV2.jinja2", "r").read().strip()
 AGENT_NAME = "coder"
@@ -102,6 +103,7 @@ class Coder:
             AgentState().add_to_current_state(project_name, new_state)
             time.sleep(2)
 
+    @retry_wrapper
     def execute(
         self,
         step_by_step_plan: str,
@@ -114,9 +116,8 @@ class Coder:
         
         valid_response = self.validate_response(response)
         
-        while not valid_response:
-            print(AGENT_NAME, "Invalid response from the model, trying again...")
-            return self.execute(step_by_step_plan, user_context, search_results, project_name)
+        if not valid_response:
+            return False
         
         print(valid_response)
         

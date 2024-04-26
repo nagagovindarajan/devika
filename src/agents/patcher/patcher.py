@@ -7,6 +7,7 @@ from typing import List, Dict, Union
 from src.config import Config
 from src.llm import LLM
 from src.state import AgentState
+from src.services.utils import retry_wrapper
 
 PROMPT = open("src/agents/patcher/promptV2.jinja2", "r").read().strip()
 AGENT_NAME = "patcher"
@@ -100,6 +101,7 @@ class Patcher:
             AgentState().add_to_current_state(project_name, new_state)
             time.sleep(1)
 
+    @retry_wrapper
     def execute(
         self,
         conversation: str,
@@ -120,16 +122,8 @@ class Patcher:
         
         valid_response = self.validate_response(response)
         
-        while not valid_response:
-            print(AGENT_NAME, "Invalid response from the model, trying again...")
-            return self.execute(
-                conversation,
-                code_markdown,
-                commands,
-                error,
-                system_os,
-                project_name
-            )
+        if not valid_response:
+            return False
         
         self.emulate_code_writing(valid_response, project_name)
 

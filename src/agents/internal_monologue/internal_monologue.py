@@ -3,6 +3,7 @@ import json
 from jinja2 import Environment, BaseLoader
 
 from src.llm import LLM
+from src.services.utils import retry_wrapper
 
 PROMPT = open("src/agents/internal_monologue/prompt.jinja2").read().strip()
 AGENT_NAME = "monologue"
@@ -34,15 +35,11 @@ class InternalMonologue:
         else:
             return response["internal_monologue"]
 
+    @retry_wrapper
     def execute(self, current_prompt: str, project_name: str) -> str:
         rendered_prompt = self.render(current_prompt)
         response = self.llm.inference(rendered_prompt, project_name, AGENT_NAME)
         
         valid_response = self.validate_response(response)
-        
-        while not valid_response:
-            print(AGENT_NAME, "Invalid response from the model, trying again...")
-            return self.execute(current_prompt, project_name)
-
         return valid_response
 

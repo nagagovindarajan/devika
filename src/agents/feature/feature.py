@@ -7,6 +7,7 @@ from typing import List, Dict, Union
 from src.config import Config
 from src.llm import LLM
 from src.state import AgentState
+from src.services.utils import retry_wrapper
 
 PROMPT = open("src/agents/feature/promptV2.jinja2", "r").read().strip()
 AGENT_NAME = "feature"
@@ -32,7 +33,7 @@ class Feature:
             system_os=system_os
         )
 
-    def validate_response(response: str) -> Union[List[Dict[str, str]], bool]:
+    def validate_response(self, response: str) -> Union[List[Dict[str, str]], bool]:
         response = response.strip()
 
         # response = response.split("~~~", 1)[1]
@@ -97,6 +98,7 @@ class Feature:
             AgentState().add_to_current_state(project_name, new_state)
             time.sleep(1)
 
+    @retry_wrapper
     def execute(
         self,
         conversation: list,
@@ -109,10 +111,8 @@ class Feature:
         
         valid_response = self.validate_response(response)
         
-        while not valid_response:
-            print(AGENT_NAME, "Invalid response from the model, trying again...")
-            return self.execute(conversation, code_markdown, system_os, project_name)
-        print(valid_response)
+        if not valid_response:
+            return False
         
         self.emulate_code_writing(valid_response, project_name)
 
