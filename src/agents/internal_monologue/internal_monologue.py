@@ -3,7 +3,7 @@ import json
 from jinja2 import Environment, BaseLoader
 
 from src.llm import LLM
-from src.services.utils import retry_wrapper
+from src.services.utils import retry_wrapper, validate_responses
 
 PROMPT = open("src/agents/internal_monologue/prompt.jinja2").read().strip()
 AGENT_NAME = "monologue"
@@ -17,19 +17,10 @@ class InternalMonologue:
         template = env.from_string(PROMPT)
         return template.render(current_prompt=current_prompt)
 
+    @validate_responses
     def validate_response(self, response: str):
-        response = response.strip().replace("```json", "```")
-        
-        if response.startswith("```") and response.endswith("```"):
-            response = response[3:-3].strip()
- 
-        try:
-            response = json.loads(response)
-        except Exception as _:
-            return False
-        
-        response = {k.replace("\\", ""): v for k, v in response.items()}
-
+        print('-------------------> ', response)
+        print("####", type(response))
         if "internal_monologue" not in response:
             return False
         else:
@@ -39,7 +30,6 @@ class InternalMonologue:
     def execute(self, current_prompt: str, project_name: str) -> str:
         rendered_prompt = self.render(current_prompt)
         response = self.llm.inference(rendered_prompt, project_name, AGENT_NAME)
-        
         valid_response = self.validate_response(response)
         return valid_response
 

@@ -5,12 +5,17 @@
   import { onMount } from "svelte";
   import { Icons } from "../icons";
 
-  let isAgentActive = false;
   let inference_time = 0;
-  if ($agentState !== null) {
-    isAgentActive = $agentState.agent_is_active;
 
-  }
+  agentState.subscribe((value) => {
+    if (value !== null && value.agent_is_active == false) {
+      isSending.set(false);
+    }
+    if (value == null){
+      inference_time = 0;
+    }
+  });
+
   let messageInput = "";
   async function handleSendMessage() {
     const projectName = localStorage.getItem("selectedProject");
@@ -28,20 +33,20 @@
 
     if (messageInput.trim() !== "" && isSending) {
       $isSending = true;
-      emitMessage("user-message", {
+      emitMessage("user-message", { 
         message: messageInput,
         base_model: selectedModel,
         project_name: projectName,
         search_engine: serachEngine,
       });
-      console.log({
+      console.log({ 
         message: messageInput,
         base_model: selectedModel,
         project_name: projectName,
         search_engine: serachEngine,
       });
       messageInput = "";
-
+      
     }
   }
   onMount(() => {
@@ -51,7 +56,7 @@
       }
     });
   });
-
+       
   function setTokenSize(event) {
     const prompt = event.target.value;
     let tokens = calculateTokens(prompt);
@@ -84,7 +89,7 @@
   <textarea
     id="message-input"
     class="w-full p-4 font-medium focus:text-foreground rounded-xl outline-none h-28 pr-20 bg-secondary
-    {$isSending ? 'cursor-not-allowed' : ''}"
+    {$isSending ? 'cursor-not-allowed' : ''}"   
     placeholder="Type your message..."
     disabled={$isSending}
     bind:value={messageInput}
@@ -97,13 +102,13 @@
       }
     }}
   ></textarea>
-  <button
+  <button 
     on:click={handleSendMessage}
     disabled={$isSending}
     class="absolute text-secondary bg-primary p-2 right-4 bottom-6 rounded-full
     {$isSending ? 'cursor-not-allowed' : ''}"
   >
-  {@html Icons.CornerDownLeft}
+  {@html Icons.CornerDownLeft} 
   </button>
   <p class="absolute text-tertiary p-2 right-4 top-2">
     <span class="token-count">0</span>

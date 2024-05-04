@@ -6,6 +6,7 @@ from .action import Action
 from .internal_monologue import InternalMonologue
 from .answer import Answer
 from .runner import Runner
+from .ops import Ops
 from .feature import Feature
 from .patcher import Patcher
 from .reporter import Reporter
@@ -56,6 +57,7 @@ class Agent:
         self.internal_monologue = InternalMonologue(base_model=base_model)
         self.answer = Answer(base_model=base_model)
         self.runner = Runner(base_model=base_model)
+        self.ops = Ops(base_model=base_model)
         self.feature = Feature(base_model=base_model)
         self.patcher = Patcher(base_model=base_model)
         self.reporter = Reporter(base_model=base_model)
@@ -208,9 +210,8 @@ class Agent:
 
         elif action == "run":
             project_path = self.project_manager.get_project_path(project_name)
-            self.runner.execute(
+            self.ops.execute(
                 conversation=conversation,
-                code_markdown=code_markdown,
                 os_system=os_system,
                 project_path=project_path,
                 project_name=project_name
@@ -357,6 +358,35 @@ class Agent:
         self.coder.save_code_to_project(code, project_name)
 
         self.agent_state.set_agent_active(project_name, False)
+        self.agent_state.set_agent_completed(project_name, True)
+        self.project_manager.add_message_from_devika(
+            project_name,
+            "I have completed the my task. \n"
+            "if you would like me to do anything else, please let me know. \n"
+        )
+
+
+    def ops_execute(self, prompt: str, project_name: str) -> str:
+        """
+        Agentic flow of execution
+        """
+
+        if project_name:
+            self.project_manager.add_message_from_user(project_name, prompt)
+
+        self.agent_state.create_state(project=project_name)
+        
+        os_system = platform.platform()
+
+        project_path = self.project_manager.get_project_path(project_name)
+        self.ops.execute(
+            conversation=prompt,
+            os_system=os_system,
+            project_path=project_path,
+            project_name=project_name
+        )
+
+        self.project_manager.add_message_from_devika(project_name, "reply from ops execute")
         self.agent_state.set_agent_completed(project_name, True)
         self.project_manager.add_message_from_devika(
             project_name,

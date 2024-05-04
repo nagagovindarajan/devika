@@ -7,7 +7,7 @@
   function selectProject(project) {
     $selectedProject = project;
     fetchMessages();
-    // fetchAgentState();
+    fetchAgentState();
     document.getElementById("project-dropdown").classList.add("hidden");
   }
   function selectModel(model) {
@@ -25,6 +25,10 @@
       await createProject(projectName);
       selectProject(projectName);
       tokenUsage.set(0);
+      messages.set([]);
+      agentState.set(null);
+      isSending.set(false);
+
     }
   }
   async function deleteproject(project) {
@@ -34,7 +38,6 @@
       messages.set([]);
       agentState.set(null);
       tokenUsage.set(0);
-      agentState.set(null);
       isSending.set(false);
       $selectedProject = "Select Project";
       localStorage.setItem("selectedProject", "");
@@ -62,7 +65,7 @@
     });
   }
   onMount(() => {
-
+    
     (async () => {
       if(serverStatus){
         await fetchInitialData();
@@ -80,7 +83,7 @@
       document.removeEventListener("click", closeDropdowns);
     };
   });
-
+  
 </script>
 
 <div class="control-panel border-b border-border bg-background pb-3">
@@ -148,7 +151,7 @@
       <span>Token Usage:</span>
       <span id="token-count" class="token-count-animation text-foreground">{$tokenUsage}</span>
     </div>
-
+    
     <div class="relative inline-block text-left">
       <div>
         <button
@@ -222,7 +225,7 @@
                 <div class="flex flex-col gap-[1px] px-6 w-full">
                   {#each modelItems as models}
                     <button
-                      class="relative nav-button flex text-start text-sm text-clip hover:bg-black/20 px-2 py-1.5 rounded-md transition-colors
+                      class="relative nav-button flex text-start text-sm text-clip hover:bg-black/20 px-2 py-1.5 rounded-md transition-colors 
                       {selectedModel == models[0] ? 'bg-gray-300': ''}"
                       on:click|preventDefault={() => selectModel(models[0])}
                     >

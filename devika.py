@@ -81,6 +81,14 @@ def handle_message(data):
     agent = Agent(base_model=base_model, search_engine=search_engine)
 
     state = AgentState.get_latest_state(project_name)
+
+    if message.incudes("@ops"):
+        # ops command
+        thread = Thread(target=lambda: agent.ops_execute(message, project_name))
+        thread.start()
+        emit_agent("info", {"type": "info", "message": "Ops Agent running"})
+        return
+
     if not state:
         thread = Thread(target=lambda: agent.execute(message, project_name))
         thread.start()
@@ -186,9 +194,7 @@ def real_time_logs():
 @route_logger(logger)
 def set_settings():
     data = request.json
-    print("Data: ", data)
-    config.config.update(data)
-    config.save_config()
+    config.update_config(data)
     return jsonify({"message": "Settings updated"})
 
 
@@ -205,4 +211,4 @@ def status():
 
 if __name__ == "__main__":
     logger.info("Devika is up and running!")
-    socketio.run(app, debug=True, port=1337, host="0.0.0.0")
+    socketio.run(app, debug=False, port=1337, host="0.0.0.0")

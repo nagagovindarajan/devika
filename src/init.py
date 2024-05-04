@@ -8,7 +8,7 @@ def init_devika():
 
     logger.info("Initializing Devika...")
     logger.info("checking configurations...")
-
+    
     config = Config()
 
     sqlite_db = config.get_sqlite_db()
