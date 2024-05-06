@@ -1,0 +1,11 @@
+Here is the response in the required JSON format:
+
+```
+{
+    "queries": [
+        "project execution best practices",
+        "identifying project dependencies"
+    ],
+    "ask_user": ""
+}
+```
