@@ -179,6 +179,6 @@ class Ops:
             stderr=subprocess.PIPE,
             shell=True, 
             cwd=project_path,
-            timeout=10
+            timeout=300
         )
         return process

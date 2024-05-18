@@ -18,8 +18,9 @@ class ReadCode:
             for file in files:
                 try:
                     file_path = os.path.join(root, file)
-                    with open(file_path, 'r') as file_content:
-                        files_list.append({"filename": file_path, "code": file_content.read()})
+                    if ".terraform" not in file_path and file != ".terraform.lock.hcl":
+                        with open(file_path, 'r') as file_content:
+                            files_list.append({"filename": file_path, "code": file_content.read()})
                 except:
                     pass
 

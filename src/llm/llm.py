@@ -3,6 +3,7 @@ import sys
 import tiktoken
 from typing import List, Tuple
 
+from src.llm.aws_bedrock import AWSBedrock
 from src.socket_instance import emit_agent
 from .ollama_client import Ollama
 from .claude_client import Claude
@@ -56,10 +57,18 @@ class LLM:
                 ("Mixtral", "mixtral-8x7b-32768"),
                 ("GEMMA 7B", "gemma-7b-it"),
             ],
+            "AWS_BEDROCK": [
+                ("Claude 3 Opus", "anthropic.claude-3-opus-20240229-v1:0"),
+                ("Claude 3 Sonnet", "anthropic.claude-3-sonnet-20240229-v1:0"),
+                ("Claude 3 Haiku", "anthropic.claude-3-haiku-20240307-v1:0"),
+                ("Claude 2.1", "anthropic.claude-v2:1"),
+                ("Claude 2", "anthropic.claude-v2"),
+                ("Claude 1.2", "anthropic.claude-instant-v1"),
+            ],
             "OLLAMA": []
         }
         if ollama.client:
-            self.models["OLLAMA"] = [(model["name"].split(":")[0], model["name"]) for model in ollama.models]
+            self.models["OLLAMA"] = [(model["name"], model["name"]) for model in ollama.models]
 
     def list_models(self) -> dict:
         return self.models
@@ -95,7 +104,8 @@ class LLM:
             "OPENAI": OpenAi(),
             "GOOGLE": Gemini(),
             "MISTRAL": MistralAi(),
-            "GROQ": Groq()
+            "GROQ": Groq(),
+            "AWS_BEDROCK": AWSBedrock(),
         }
 
         try:

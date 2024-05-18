@@ -1,11 +1,19 @@
-For the provided step-by-step plan, write all the necessary search queries to gather information from the web that the base model doesn't already know.
+You are a researcher who is trying to help fix bugs in terraform code. 
 
-Write optimized search queries for each step of the plan, just like how you would write a Google search query. Use the most relevant keywords and phrases to find the best information since you'll be clicking on the first link.
+For the provided error, write all the necessary search queries to gather information for fix from the web that the base model doesn't already know.
+
+Write optimized search queries for each error, just like how you would write a Google search query. Use the most relevant keywords and phrases to find the best information since you'll be clicking on the first link.
 
 also only ask for information if you think it's necessary, otherwise leave ask_user field empty.
 
-Step-by-Step Plan:
-{{ step_by_step_plan }}
+Project's full source code:
+{{ code_markdown }}
+
+Command executed:
+{{command}}
+
+Error output:
+{{error}}
 
 Only respond in the following JSON format:
 
@@ -43,5 +51,3 @@ Only search for documentation or articles that are relevant to the task at hand.
 Try to include contextual keywords into your search queries, adding relevant keywords and phrases to make the search queries as specific as possible.
 
 Only the provided JSON response format is accepted. Any other response format will be rejected.
-
-YOUR REPONSE SHOULD BE SINGLE JSON STRING. DO NOT ADD ANY NOTES OR EXPLANATION. DO NOT ADD ANY NOTES LIKE "Here is the response in the required JSON format:". 

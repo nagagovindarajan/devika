@@ -82,14 +82,21 @@ def handle_message(data):
 
     state = AgentState.get_latest_state(project_name)
 
-    if message.incudes("@ops"):
+    # if agent=="ops":
         # ops command
+
+    if message == "run this project":
         thread = Thread(target=lambda: agent.ops_execute(message, project_name))
         thread.start()
         emit_agent("info", {"type": "info", "message": "Ops Agent running"})
-        return
 
-    if not state:
+    # elif agent=="hcl":
+    #     # ops command
+    #     thread = Thread(target=lambda: agent.patcher(message, project_name))
+    #     thread.start()
+    #     emit_agent("info", {"type": "info", "message": "Ops Agent running"})
+
+    elif not state:
         thread = Thread(target=lambda: agent.execute(message, project_name))
         thread.start()
     else:

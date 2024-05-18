@@ -11,7 +11,7 @@ from src.logger import Logger
 from src.services.utils import retry_wrapper
 from src.socket_instance import emit_agent
 
-PROMPT = open("src/agents/coder/promptV2.jinja2", "r").read().strip()
+# PROMPT = open("src/agents/coder/promptV2.jinja2", "r").read().strip()
 AGENT_NAME = "coder"
 
 class Coder:
@@ -25,7 +25,7 @@ class Coder:
         self, step_by_step_plan: str, user_context: str, search_results: dict
     ) -> str:
         env = Environment(loader=BaseLoader())
-        template = env.from_string(PROMPT)
+        template = env.from_string(get_prompt("hcl"))
         return template.render(
             step_by_step_plan=step_by_step_plan,
             user_context=user_context,
@@ -134,3 +134,6 @@ class Coder:
         self.emulate_code_writing(valid_response, project_name)
 
         return valid_response
+
+def get_prompt(name) -> str:
+    return open("src/agents/coder/prompt_"+name+".jinja2", "r").read().strip()

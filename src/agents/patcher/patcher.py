@@ -10,7 +10,7 @@ from src.llm import LLM
 from src.state import AgentState
 from src.services.utils import retry_wrapper
 
-PROMPT = open("src/agents/patcher/promptV2.jinja2", "r").read().strip()
+PROMPT = open("src/agents/patcher/prompt_hcl.jinja2", "r").read().strip()
 AGENT_NAME = "patcher"
 
 class Patcher:
@@ -26,6 +26,8 @@ class Patcher:
         code_markdown: str,
         commands: list,
         error :str,
+        user_context,
+        search_results: dict,
         system_os: str
     ) -> str:
         env = Environment(loader=BaseLoader())
@@ -35,6 +37,8 @@ class Patcher:
             code_markdown=code_markdown,
             commands=commands,
             error=error,
+            user_context = user_context,
+            search_results = search_results,
             system_os=system_os
         )
 
@@ -54,7 +58,10 @@ class Patcher:
             if line.startswith("File: "):
                 if current_file and current_code:
                     result.append({"file": current_file, "code": "\n".join(current_code)})
-                current_file = line.split("`")[1].strip()
+                if "`" in line:
+                    current_file = line.split("`")[1].strip()
+                else:
+                    current_file = line.split(":")[1].strip()
                 current_code = []
                 code_block = False
             elif line.startswith("```"):
@@ -118,7 +125,9 @@ class Patcher:
         code_markdown: str,
         commands: list,
         error: str,
-        system_os: dict,
+        user_context,
+        search_results: dict,
+        system_os: str,
         project_name: str
     ) -> str:
         prompt = self.render(
@@ -126,6 +135,8 @@ class Patcher:
             code_markdown,
             commands,
             error,
+            user_context,
+            search_results,
             system_os
         )
         response = self.llm.inference(prompt, project_name, AGENT_NAME)

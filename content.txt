@@ -1,11 +1,23 @@
-Here is the response in the required JSON format:
-
-```
-{
-    "queries": [
-        "project execution best practices",
-        "identifying project dependencies"
-    ],
-    "ask_user": ""
-}
-```
+[0m[0m
+[31m[31m╷[0m[0m
+[31m│[0m [0m[1m[31mError: [0m[0m[1mDuplicate provider configuration[0m
+[31m│[0m [0m
+[31m│[0m [0m[0m  on outputs.tf line 1:
+[31m│[0m [0m   1: [4mprovider "aws"[0m {[0m
+[31m│[0m [0m
+[31m│[0m [0mA default (non-aliased) provider configuration for "aws" was already given
+[31m│[0m [0mat main.tf:1,1-15. If multiple configurations are required, set the "alias"
+[31m│[0m [0margument for alternative configurations.
+[31m╵[0m[0m
+[0m[0m
+[31m[31m╷[0m[0m
+[31m│[0m [0m[1m[31mError: [0m[0m[1mDuplicate provider configuration[0m
+[31m│[0m [0m
+[31m│[0m [0m[0m  on outputs.tf line 1:
+[31m│[0m [0m   1: [4mprovider "aws"[0m {[0m
+[31m│[0m [0m
+[31m│[0m [0mA default (non-aliased) provider configuration for "aws" was already given
+[31m│[0m [0mat main.tf:1,1-15. If multiple configurations are required, set the "alias"
+[31m│[0m [0margument for alternative configurations.
+[31m╵[0m[0m
+[0m[0m

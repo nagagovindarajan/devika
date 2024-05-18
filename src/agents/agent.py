@@ -6,6 +6,7 @@ from .action import Action
 from .internal_monologue import InternalMonologue
 from .answer import Answer
 from .runner import Runner
+from .debugger import Debugger
 from .ops import Ops
 from .feature import Feature
 from .patcher import Patcher
@@ -57,6 +58,7 @@ class Agent:
         self.internal_monologue = InternalMonologue(base_model=base_model)
         self.answer = Answer(base_model=base_model)
         self.runner = Runner(base_model=base_model)
+        self.debugger = Debugger(base_model=base_model)
         self.ops = Ops(base_model=base_model)
         self.feature = Feature(base_model=base_model)
         self.patcher = Patcher(base_model=base_model)
@@ -210,8 +212,9 @@ class Agent:
 
         elif action == "run":
             project_path = self.project_manager.get_project_path(project_name)
-            self.ops.execute(
+            self.debugger.execute(
                 conversation=conversation,
+                code_markdown=code_markdown,
                 os_system=os_system,
                 project_path=project_path,
                 project_name=project_name
@@ -240,16 +243,18 @@ class Agent:
             self.feature.save_code_to_project(code, project_name)
 
         elif action == "bug":
-            code = self.patcher.execute(
-                conversation=conversation,
-                code_markdown=code_markdown,
-                commands=None,
-                error=prompt,
-                system_os=os_system,
-                project_name=project_name
-            )
-            print("\nbug code :: ", code, '\n')
-            self.patcher.save_code_to_project(code, project_name)
+            # code = self.patcher.execute(
+            #     conversation=conversation,
+            #     code_markdown=code_markdown,
+            #     commands=None,
+            #     error=prompt,
+            #     system_os=os_system,
+            #     project_name=project_name
+            # )
+            # print("\nbug code :: ", code, '\n')
+            # self.patcher.save_code_to_project(code, project_name)
+            self.project_manager.add_message_from_devika(project_name, "Bug fixing being worked on. Stay tuned.")
+
 
         elif action == "report":
             markdown = self.reporter.execute(conversation, code_markdown, project_name)
@@ -365,7 +370,6 @@ class Agent:
             "if you would like me to do anything else, please let me know. \n"
         )
 
-
     def ops_execute(self, prompt: str, project_name: str) -> str:
         """
         Agentic flow of execution
@@ -377,14 +381,19 @@ class Agent:
         self.agent_state.create_state(project=project_name)
         
         os_system = platform.platform()
+        conversation = self.project_manager.get_all_messages_formatted(project_name)
 
         project_path = self.project_manager.get_project_path(project_name)
-        self.ops.execute(
-            conversation=prompt,
-            os_system=os_system,
-            project_path=project_path,
-            project_name=project_name
-        )
+        code_markdown = ReadCode(project_name).code_set_to_markdown()
+
+        self.debugger.execute(
+                conversation=conversation,
+                code_markdown=code_markdown,
+                os_system=os_system,
+                project_path=project_path,
+                project_name=project_name,
+                search_engine=self.engine
+            )
 
         self.project_manager.add_message_from_devika(project_name, "reply from ops execute")
         self.agent_state.set_agent_completed(project_name, True)
