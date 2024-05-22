@@ -3,20 +3,23 @@ import json
 
 from src.logger import Logger
 from botocore.exceptions import ClientError
+from src.config import Config
 
 logger = Logger()
+config = Config()
 
 class AWSBedrock:
     def __init__(self):
-        self.client = boto3.client('bedrock')
-        self.runtime_client = boto3.client("bedrock-runtime")
+        aws_profile = config.get_aws_profile()
+        self.client = boto3.Session(profile_name=aws_profile).client('bedrock')
+        self.runtime_client = boto3.Session(profile_name=aws_profile).client("bedrock-runtime")
 
     def inference(self, model_id: str, prompt: str) -> str:
 
         if "claude-3" in model_id:
             body = json.dumps({
                 "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 1000,
+                "max_tokens": 4096,
                 "messages": [
                     {
                         "role": "user",
@@ -42,7 +45,7 @@ class AWSBedrock:
         else:
             body = json.dumps({
                 "prompt":f"\n\nHuman: {prompt}\n\nAssistant:",
-                "max_tokens_to_sample": 1000,
+                "max_tokens_to_sample": 4096,
                 "temperature": 0.5
             })
 

@@ -20,6 +20,7 @@ logger = Logger()
 
 PROMPT = open("src/agents/researcher/prompt.jinja2").read().strip()
 DEBUG_PROMPT = open("src/agents/researcher/prompt_debug.jinja2").read().strip()
+OPS_PROMPT = open("src/agents/researcher/prompt_ops.jinja2").read().strip()
 AGENT_NAME = "reseacher"
 
 class Researcher:
@@ -40,6 +41,16 @@ class Researcher:
         template = env.from_string(DEBUG_PROMPT)
         return template.render(
             code_markdown=code_markdown,
+            command=command,
+            error=error,
+            contextual_keywords=contextual_keywords
+        )
+    
+    def render_ops(self, commands: str, command: str, error: str, contextual_keywords: str) -> str:
+        env = Environment(loader=BaseLoader())
+        template = env.from_string(OPS_PROMPT)
+        return template.render(
+            commands=commands,
             command=command,
             error=error,
             contextual_keywords=contextual_keywords
@@ -77,7 +88,18 @@ class Researcher:
         valid_response = self.validate_response(response)
 
         return valid_response
-    
+
+    @retry_wrapper
+    def execute_ops(self, commands: list, command: str, error: str, contextual_keywords: List[str], project_name: str) -> dict | bool:
+        contextual_keywords_str = ", ".join(map(lambda k: k.capitalize(), contextual_keywords))
+        prompt = self.render_ops(commands, command, error, contextual_keywords_str)
+        
+        response = self.llm.inference(prompt, project_name, AGENT_NAME)
+        
+        valid_response = self.validate_response(response)
+
+        return valid_response
+
     def search(self, research_response, project_name: str, project_manager: ProjectManager, agent_state: AgentState, engine: str, formatter: Formatter) -> List[str]:
 
         queries = research_response["queries"]

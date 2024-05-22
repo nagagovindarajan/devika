@@ -206,7 +206,7 @@ class Debugger:
                     patcher=Patcher(base_model=self.base_model)
                 )                
 
-                ProjectManager().add_message_from_devika(project_name, "Researcher updated the code. Lets run now.")
+                ProjectManager().add_message_from_devika(project_name, "Researcher updated the code. Let's run now.")
 
                 command_failed = False
                     
@@ -227,6 +227,8 @@ class Debugger:
                     break
 
         ProjectManager().add_message_from_devika(project_name, "Code ran successfully.")
+        AgentState().set_agent_active(project_name, False)
+        AgentState().set_agent_completed(project_name, True)
 
         return True
 

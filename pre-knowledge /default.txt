@@ -1,0 +1,19 @@
+How to initialize Terraform?
+terraform init
+
+How to validate terraform configuration files?
+terraform validate
+
+How to see terraform plan?
+terraform plan
+
+How to run terraform project
+terraform init
+terraform validate
+terraform plan
+
+How to run python project?
+python main.py
+
+How to install new python package?
+pip install <new package name>

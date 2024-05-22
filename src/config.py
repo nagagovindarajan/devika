@@ -171,6 +171,15 @@ class Config:
     def set_timeout_inference(self, value):
         self.config["TIMEOUT"]["INFERENCE"] = value
         self.save_config()
+    
+    def get_aws_profile(self):
+        return self.config["AWS"]["PROFILE"]
+
+    def get_chroma_path(self):
+        return self.config["CHROMA"]["PATH"]
+
+    def get_chroma_embedding(self):
+        return self.config["CHROMA"]["EMBEDDING_MODEL"]
 
     def save_config(self):
         with open("config.toml", "w") as f:

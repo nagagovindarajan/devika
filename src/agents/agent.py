@@ -19,6 +19,7 @@ from src.logger import Logger
 
 from src.bert.sentence import SentenceBert
 from src.memory import KnowledgeBase
+from src.memory.chroma_db import ChromaDb
 from src.browser.search import BingSearch, GoogleSearch, DuckDuckGoSearch
 from src.browser import Browser
 from src.browser import start_interaction
@@ -59,12 +60,11 @@ class Agent:
         self.answer = Answer(base_model=base_model)
         self.runner = Runner(base_model=base_model)
         self.debugger = Debugger(base_model=base_model)
-        self.ops = Ops(base_model=base_model)
+        self.ops = Ops(base_model=base_model, chroma_db=ChromaDb())
         self.feature = Feature(base_model=base_model)
         self.patcher = Patcher(base_model=base_model)
         self.reporter = Reporter(base_model=base_model)
         self.decision = Decision(base_model=base_model)
-
         self.project_manager = ProjectManager()
         self.agent_state = AgentState()
         self.engine = search_engine
@@ -370,7 +370,7 @@ class Agent:
             "if you would like me to do anything else, please let me know. \n"
         )
 
-    def ops_execute(self, prompt: str, project_name: str) -> str:
+    def ops_execute(self, prompt: str, project_name: str, agent_name: str) -> str:
         """
         Agentic flow of execution
         """
@@ -386,16 +386,26 @@ class Agent:
         project_path = self.project_manager.get_project_path(project_name)
         code_markdown = ReadCode(project_name).code_set_to_markdown()
 
-        self.debugger.execute(
+        if agent_name == "debug":
+            agent_response = self.debugger.execute(
+                    conversation=conversation,
+                    code_markdown=code_markdown,
+                    os_system=os_system,
+                    project_path=project_path,
+                    project_name=project_name,
+                    search_engine=self.engine
+                )
+            self.project_manager.add_message_from_devika(project_name, "agent_response")
+        elif agent_name == "ops":
+            agent_response = self.ops.execute(
                 conversation=conversation,
-                code_markdown=code_markdown,
                 os_system=os_system,
                 project_path=project_path,
                 project_name=project_name,
                 search_engine=self.engine
             )
-
-        self.project_manager.add_message_from_devika(project_name, "reply from ops execute")
+            self.project_manager.add_message_from_devika(project_name, "agent_response")
+        
         self.agent_state.set_agent_completed(project_name, True)
         self.project_manager.add_message_from_devika(
             project_name,

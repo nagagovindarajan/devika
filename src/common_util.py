@@ -1,5 +1,8 @@
 import subprocess
 import re
+from src.project import ProjectManager
+from src.state import AgentState
+import time
 
 
 def exec_command(command: str, project_path: str):
@@ -21,3 +24,12 @@ def exec_command(command: str, project_path: str):
     cleaned_output = re.sub(r'\x1B\[[0-?]*[ -/]*[@-~]', '', command_output)
 
     return process.returncode, command_output, cleaned_output
+
+def convert_to_single_word(text):
+    # Split the text into words
+    words = text.split()
+    
+    # Capitalize each word and join them without spaces
+    single_word = ''.join(word.capitalize() for word in words)
+    
+    return single_word

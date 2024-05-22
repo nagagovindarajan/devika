@@ -29,3 +29,10 @@ LOG_PROMPTS = "false"
 
 [TIMEOUT]
 INFERENCE = 60
+
+[AWS]
+PROFILE = "chatbot"
+
+[CHROMA]
+PATH = "data/chroma"
+EMBEDDING_MODEL = "all-MiniLM-L6-v2"

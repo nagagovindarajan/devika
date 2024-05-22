@@ -85,8 +85,13 @@ def handle_message(data):
     # if agent=="ops":
         # ops command
 
-    if message == "run this project":
-        thread = Thread(target=lambda: agent.ops_execute(message, project_name))
+    if message.strip() == "run this project":
+        thread = Thread(target=lambda: agent.ops_execute(message, project_name, "debug"))
+        thread.start()
+        emit_agent("info", {"type": "info", "message": "Debug Agent running"})
+
+    elif "@ops" in message.strip().lower():
+        thread = Thread(target=lambda: agent.ops_execute(message, project_name, "ops"))
         thread.start()
         emit_agent("info", {"type": "info", "message": "Ops Agent running"})
 
