@@ -366,8 +366,8 @@ class Agent:
         self.agent_state.set_agent_completed(project_name, True)
         self.project_manager.add_message_from_devika(
             project_name,
-            "I have completed the my task. \n"
-            "if you would like me to do anything else, please let me know. \n"
+            "I have completed the my task. <br>"
+            "if you would like me to do anything else, please let me know. <br>"
         )
 
     def ops_execute(self, prompt: str, project_name: str, agent_name: str) -> str:
@@ -409,6 +409,6 @@ class Agent:
         self.agent_state.set_agent_completed(project_name, True)
         self.project_manager.add_message_from_devika(
             project_name,
-            "I have completed the my task. \n"
-            "if you would like me to do anything else, please let me know. \n"
+            "I have completed the my task. <br>"
+            "if you would like me to do anything else, please let me know. <br>"
         )

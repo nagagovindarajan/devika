@@ -1,0 +1,50 @@
+You will be given an AWS CLI command response. Your task is to generate a JSON output suitable for creating a pie chart, bar chart, time series graph, or plain JSON based on the response data.
+
+Here is the AWS CLI command response:
+<response>
+{{raw_text}}
+</response>
+
+First, parse the response and extract the relevant data. The response can be a json output or contain lines with values, separated by a space.
+
+<scratchpad>
+Think about how to best structure the extracted data for further processing. It might be helpful to create a dictionary or a list of tuples containing the AWS services.
+</scratchpad>
+
+Next, analyze the extracted data to determine the most appropriate chart type:
+- If the data represents parts of a whole (percentages or proportions), a pie chart is suitable.
+- If the data is categorical and you want to compare values across categories, a bar chart is appropriate.
+- If the data is a series of data points over time, a time series graph should be used.
+- If none of the above apply or if the data is not suitable for visualization, output the data as plain JSON.
+
+<scratchpad>
+Consider the nature of the instance type and count data. Does it fit into any of the chart type categories mentioned above? If not, prepare to output the data as plain JSON.
+</scratchpad>
+
+Now, format the extracted data into a JSON structure suitable for the chosen chart type:
+- For a pie chart or bar chart, use the following format:
+  [
+    {"item": "instance_type1", "value": count1},
+    {"item": "instance_type2", "value": count2},
+    ...
+  ]
+- For a time series graph, use the following format (assuming the instance types are sorted by timestamp):
+  [
+    {"item": "timestamp1", "value": count1},
+    {"item": "timestamp2", "value": count2},
+    ...
+  ]
+- For plain JSON, use a simple key-value format:
+  {
+    "instance_type1": count1,
+    "instance_type2": count2,
+    ...
+  }
+
+Save the formatted JSON output to a file named according to the chosen chart type or "output.json" for plain JSON.
+
+<scratchpad>
+Think about any edge cases or error handling that might be necessary. For example, what should happen if the response is empty or if the data is not in the expected format?
+</scratchpad>
+
+Provide your final output inside <output> tags and give output type inside <chart_type> tags (pie, bar, timeseries or plain)

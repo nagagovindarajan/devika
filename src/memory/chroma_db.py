@@ -26,7 +26,7 @@ class ChromaDb:
         # load from disk
         if not os.path.exists(chroma_path):
             os.makedirs(chroma_path, exist_ok=True)
-            loader = TextLoader("pre-knowledge/default.txt")
+            loader = TextLoader("./pre-knowledge/default.txt")
             documents = loader.load()
             docs = self.text_splitter.split_documents(documents)      
             self.db = Chroma.from_documents(
@@ -68,5 +68,5 @@ class ChromaDb:
     
     def add_knowledge(self, question: str, answer: list):
         knowledge = question + '\nAnswer: '+ '\n'.join(answer)
-        self.add_text(convert_to_single_word(question[-1]), knowledge)
+        self.add_text(convert_to_single_word(question), knowledge)
     

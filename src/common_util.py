@@ -1,5 +1,6 @@
 import subprocess
 import re
+import json
 from src.project import ProjectManager
 from src.state import AgentState
 import time
@@ -22,7 +23,8 @@ def exec_command(command: str, project_path: str):
         command_output = f"ERROR: Command failed with exit code {process.returncode}\n{process.stderr.decode('utf-8')}"
     
     cleaned_output = re.sub(r'\x1B\[[0-?]*[ -/]*[@-~]', '', command_output)
-
+    if cleaned_output == "":
+        cleaned_output = "No output"
     return process.returncode, command_output, cleaned_output
 
 def convert_to_single_word(text):
@@ -33,3 +35,11 @@ def convert_to_single_word(text):
     single_word = ''.join(word.capitalize() for word in words)
     
     return single_word
+
+def is_json(input_string):
+    try:
+        json.loads(input_string)
+        return True
+    except json.JSONDecodeError:
+        return False
+ 

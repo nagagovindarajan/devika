@@ -28,7 +28,8 @@ class ProjectManager:
         return {
             "from_devika": True,
             "message": None,
-            "timestamp": timestamp
+            "timestamp": timestamp,
+            "type": "html"
         }
 
     def create_project(self, project: str):
@@ -58,9 +59,11 @@ class ProjectManager:
                 session.add(project_state)
                 session.commit()
 
-    def add_message_from_devika(self, project: str, message: str):
+    def add_message_from_devika(self, project: str, message: str = "", message_type=None):
         new_message = self.new_message()
         new_message["message"] = message
+        if message_type:
+            new_message["type"] = message_type
         emit_agent("server-message", {"messages": new_message})
         self.add_message_to_project(project, new_message)
 

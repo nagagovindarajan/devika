@@ -163,3 +163,4 @@ notes.md
 data/
 .vscode/settings.json
 notebooks/test-data/chroma_db/
+ui/package-lock.json

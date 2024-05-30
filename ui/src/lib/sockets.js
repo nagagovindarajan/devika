@@ -18,7 +18,7 @@ export function initializeSockets() {
   });
 
   socket.on("server-message", function (data) {
-    console.log(data)
+    console.log("message received:", data);
     messages.update((msgs) => [...msgs, data["messages"]]);
   });
 
