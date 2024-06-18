@@ -30,15 +30,22 @@ export const projectFiles = writable(null);
 export const selectedProject = writable('');
 export const selectedModel = writable('');
 export const selectedSearchEngine = writable('');
+export const selectedAgent = writable('');
+export const selectedTab = writable('terminal');
+export const graphicsData = writable('');
 
 subscribeAndStore(selectedProject, 'selectedProject', 'select project');
 subscribeAndStore(selectedModel, 'selectedModel', 'select model');
 subscribeAndStore(selectedSearchEngine, 'selectedSearchEngine', 'select search engine');
+subscribeAndStore(selectedAgent, 'selectedAgent', 'select agent');
+subscribeAndStore(selectedTab, 'selectedTab', 'terminal');
+subscribeAndStore(graphicsData, 'graphicsData', '');
 
 // List related stores
 export const projectList = writable([]);
 export const modelList = writable({});
 export const searchEngineList = writable([]);
+export const agentList = writable([]);
 
 // Agent related stores
 export const agentState = writable(null);

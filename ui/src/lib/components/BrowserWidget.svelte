@@ -32,8 +32,8 @@
         src={API_BASE_URL + "/api/get-browser-snapshot?snapshot_path=" + $agentState?.browser_session.screenshot}
         alt="Browser snapshot"
       />
-    {:else}
-      <div class="text-gray-400 text-sm text-center mt-5"><strong>💡 TIP:</strong> You can include a Git URL in your prompt to clone a repo!</div>
+    <!-- {:else}
+      <div class="text-gray-400 text-sm text-center mt-5"><strong>💡 TIP:</strong> You can include a Git URL in your prompt to clone a repo!</div> -->
     {/if}
   </div>
 </div>

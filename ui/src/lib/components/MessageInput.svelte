@@ -21,6 +21,7 @@
     const projectName = localStorage.getItem("selectedProject");
     const selectedModel = localStorage.getItem("selectedModel");
     const serachEngine = localStorage.getItem("selectedSearchEngine");
+    const selectedAgent = localStorage.getItem("selectedAgent");
 
     if (!projectName) {
       alert("Please select a project first!");
@@ -38,6 +39,7 @@
         base_model: selectedModel,
         project_name: projectName,
         search_engine: serachEngine,
+        agent_name: selectedAgent,
       });
       messageInput = "";
       

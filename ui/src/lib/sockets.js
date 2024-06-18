@@ -1,9 +1,10 @@
 import { socket } from "./api";
-import { messages, agentState, isSending, tokenUsage } from "./store";
+import { messages, agentState, isSending, tokenUsage, selectedTab, graphicsData } from "./store";
 import { toast } from "svelte-sonner";
 import { get } from "svelte/store";
 
 let prevMonologue = null;
+const graphicsTypes = ["pie", "bar", "timeseries"]
 
 export function initializeSockets() {
 
@@ -19,6 +20,10 @@ export function initializeSockets() {
 
   socket.on("server-message", function (data) {
     console.log("message received:", data);
+    if (graphicsTypes.includes(data["messages"].type)){
+      selectedTab.set('graphics');
+      graphicsData.set(data["messages"]);
+    }
     messages.update((msgs) => [...msgs, data["messages"]]);
   });
 
@@ -28,6 +33,15 @@ export function initializeSockets() {
     if (lastState.completed) {
       isSending.set(false);
     }
+    if(lastState.browser_session && lastState.browser_session.url && lastState.browser_session.url.length > 0){
+      selectedTab.set('browser');
+    } else if(lastState.terminal_session && lastState.command && lastState.command.length > 0){
+      selectedTab.set('terminal');
+    } 
+    // else {
+    //   selectedTab.set('graphics');
+    // }
+    console.log("current state ", lastState);
   });
 
   socket.on("tokens", function (tokens) {

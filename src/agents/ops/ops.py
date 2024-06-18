@@ -187,7 +187,7 @@ class Ops:
         command = valid_response["command"]
         response = valid_response["response"]
         
-        ProjectManager().add_message_from_devika(project_name, "<rerun response>")
+        ProjectManager().add_message_from_devika(project_name, "rerun_response")
         
         command_failed = False
         returncode, command_output, cleaned_output = exec_command(command, project_path)
@@ -232,7 +232,7 @@ class Ops:
             data = json.loads(formatted_response)
             # Check if data is a list of dictionaries
             if isinstance(data, list) and all(isinstance(entry, dict) for entry in data):
-                values = [round(entry["value"], 2) for entry in data]
+                values = [round(entry["value"], 2) if isinstance(entry["value"], float) else entry["value"] for entry in data]
                 labels = []
                 for entry in data:
                     if isinstance(entry["item"], str) and len(entry["item"]) > 0:

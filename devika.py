@@ -58,7 +58,8 @@ def data():
     project = manager.get_project_list()
     models = LLM().list_models()
     search_engines = ["Bing", "Google", "DuckDuckGo"]
-    return jsonify({"projects": project, "models": models, "search_engines": search_engines})
+    agents = ["Default", "Dev", "Ops", "Debugger", "Researcher", "Reporter", "Tester"]
+    return jsonify({"projects": project, "models": models, "search_engines": search_engines, "agents": agents})
 
 
 @app.route("/api/messages", methods=["POST"])
@@ -77,20 +78,35 @@ def handle_message(data):
     base_model = data.get('base_model')
     project_name = data.get('project_name')
     search_engine = data.get('search_engine').lower()
+    agent_name = data.get('agent_name').lower()
 
     agent = Agent(base_model=base_model, search_engine=search_engine)
 
     state = AgentState.get_latest_state(project_name)
 
-    # if agent=="ops":
-        # ops command
+    # if message.strip() == "pie" or message.strip() == "bar":
+    #     response = {"series": [44, 55, 41, 17, 15], "labels": ['Team A', 'Team B', 'Team C', 'Team D', 'Team E']}
+    #     ProjectManager().add_message_from_devika(project_name, response, message.strip())
 
-    if message.strip() == "run this project":
+    # elif message.strip() == "timeseries":
+    #     response = {"series": [44, 55, 41, 17, 15], "labels": ['Team A', 'Team B', 'Team C', 'Team D', 'Team E']}
+    #     ProjectManager().add_message_from_devika(project_name, response, message.strip())
+    
+    # else:
+    #     new_state = AgentState().new_state()
+    #     new_state["internal_monologue"] = "Running code..."
+    #     new_state["terminal_session"]["title"] = "Terminal"
+    #     new_state["terminal_session"]["command"] = "pwd"
+    #     new_state["terminal_session"]["output"] = "here"
+    #     AgentState().add_to_current_state(project_name, new_state)
+    #     ProjectManager().add_message_from_devika(project_name, "response", message.strip())
+
+    if agent_name == "debugger":
         thread = Thread(target=lambda: agent.ops_execute(message, project_name, "debug"))
         thread.start()
         emit_agent("info", {"type": "info", "message": "Debug Agent running"})
 
-    elif "@ops" in message.strip().lower():
+    elif agent_name == "ops":
         thread = Thread(target=lambda: agent.ops_execute(message, project_name, "ops"))
         thread.start()
         emit_agent("info", {"type": "info", "message": "Ops Agent running"})

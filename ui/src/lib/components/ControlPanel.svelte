@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { projectList, modelList, internet, tokenUsage, agentState, messages, searchEngineList, serverStatus, isSending, selectedProject, selectedModel, selectedSearchEngine} from "$lib/store";
+  import { projectList, modelList, internet, tokenUsage, agentState, messages, searchEngineList, agentList, serverStatus, isSending, selectedProject, selectedModel, selectedSearchEngine, selectedAgent} from "$lib/store";
   import { createProject, fetchMessages, fetchInitialData, deleteProject,fetchProjectFiles, fetchAgentState} from "$lib/api";
   import Seperator from "./ui/Seperator.svelte";
 
@@ -18,6 +18,11 @@
   function selectSearchEngine(searchEngine) {
     $selectedSearchEngine = searchEngine;
     document.getElementById("search-engine-dropdown").classList.add("hidden");
+  }
+
+  function selectAgent(agentName) {
+    $selectedAgent = agentName;
+    document.getElementById("agent-dropdown").classList.add("hidden");
   }
 
   async function createNewProject() {
@@ -49,6 +54,7 @@
     { dropdown: "project-dropdown", button: "project-button" },
     { dropdown: "model-dropdown", button: "model-button" },
     { dropdown: "search-engine-dropdown", button: "search-engine-button" },
+    { dropdown: "agent-dropdown", button: "agent-button" },
   ];
   function closeDropdowns(event) {
     dropdowns.forEach(({ dropdown, button }) => {
@@ -137,22 +143,60 @@
       </div>
     </div>
   </div>
+  <div class="relative inline-block text-left">
+    <div>
+      <button
+        type="button"
+        class="inline-flex items-center justify-between min-w-[200px] text-foreground w-fit gap-2 px-3 py-2 text-sm h-10 bg-secondary rounded-md"
+        id="agent-button"
+        aria-expanded="true"
+        aria-haspopup="true"
+      >
+        <span id="selected-agent">{$selectedAgent}</span>
+        <i class="fas fa-angle-down text-tertiary"></i>
+      </button>
+    </div>
+
+    <div
+      id="agent-dropdown"
+      class="absolute left-0 z-10 mt-2 origin-top-right min-w-[200px] bg-secondary rounded-xl shadow-lg max-h-96 overflow-y-auto hidden"
+      role="menu"
+      aria-orientation="vertical"
+      aria-labelledby="agent-button"
+      tabindex="-1"
+    >
+      <div role="none" class="flex flex-col divide-y-2 w-full">
+        {#if $agentList !== null}
+          {#each $agentList as agent}
+            <div
+              class="flex items-center px-4 hover:bg-black/20 transition-colors
+          {selectAgent === agent ? 'bg-gray-300' : ''}"
+            >
+              <button
+                class="flex gap-2 items-center text-sm py-3 w-full text-clip"
+                on:click|preventDefault={() => selectAgent(agent)}
+              >
+                {agent}
+              </button>
+            </div>
+          {/each}
+        {/if}
+      </div>
+    </div>
+  </div>
   <div
     class=""
     style="display: flex; align-items: center; gap: 20px"
   >
-    <div class="flex items-center gap-2 text-sm">
+    <!-- <div class="flex items-center gap-2 text-sm">
       <span>Internet:</span>
       <span class=" size-3 rounded-full" class:online={$internet} class:offline={!$internet}></span>
-    </div>
-
+    </div> -->
     <Seperator />
-
     <div class="flex items-center gap-2 text-sm">
       <span>Token Usage:</span>
       <span id="token-count" class="token-count-animation text-foreground">{$tokenUsage}</span>
     </div>
-    
     <div class="relative inline-block text-left">
       <div>
         <button
@@ -275,13 +319,13 @@
     }
   }
 
-  .online {
+  /* .online {
     background-color: #22c55e;
   }
 
   .offline {
     background-color: #ef4444;
-  }
+  } */
 
   .token-count-animation {
     display: inline-block;

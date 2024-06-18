@@ -5,7 +5,7 @@
   import { setMode } from "mode-watcher";
   import * as Select from "$lib/components/ui/select/index.js";
   import Seperator from "../../lib/components/ui/Seperator.svelte";
-    import { toast } from "svelte-sonner";
+  import { toast } from "svelte-sonner";
 
   let settings = {};
   let editMode = false;

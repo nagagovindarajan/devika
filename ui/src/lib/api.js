@@ -6,6 +6,7 @@ import {
   messages,
   projectFiles,
   searchEngineList,
+  agentList,
 } from "./store";
 import { io } from "socket.io-client";
 
@@ -40,6 +41,7 @@ export async function fetchInitialData() {
   projectList.set(data.projects);
   modelList.set(data.models);
   searchEngineList.set(data.search_engines);
+  agentList.set(data.agents);
   localStorage.setItem("defaultData", JSON.stringify(data));
 }
 

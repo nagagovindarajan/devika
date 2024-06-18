@@ -1,5 +1,6 @@
 <script>
   import { messages } from "$lib/store";
+  import { generatePieChartOptions, generateBarChartOptions, generateTimeSeriesChartOptions } from "$lib/utils";
   import { afterUpdate } from "svelte";
   import { chart } from "svelte-apexcharts";
 
@@ -16,100 +17,11 @@
   }
 });
 
-function generatePieChartOptions(data) {
-    let options = {
-      series: data.series,
-      chart: {
-      height: 350,
-      type: 'donut',
-    },
-      labels: data.labels,
-      responsive: [{
-        breakpoint: 480,
-        options: {
-          chart: {
-            height: 500,
-            width: 200
-          },
-          fill: {
-            type: 'gradient',
-          },
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }]
-    };
-    return options;
-  }
-
-function generateBarChartOptions(data) {
-    let options = {
-          series: [{
-          data: data.series
-        }],
-          chart: {
-          type: 'bar',
-          height: 350
-        },
-        plotOptions: {
-          bar: {
-            borderRadius: 4,
-            borderRadiusApplication: 'end',
-            horizontal: true,
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        xaxis: {
-          categories: data.labels,
-        }
-        };
-    return options;
-  }
-
-function generateTimeSeriesChartOptions(data) {
-    let options = {
-          series: [{
-            name: "Value",
-            data: data.series
-        }],
-          chart: {
-          height: 350,
-          type: 'line',
-          zoom: {
-            enabled: false
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          curve: 'straight'
-        },
-        title: {
-          text: 'Data Trend',
-          align: 'left'
-        },
-        grid: {
-          row: {
-            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-            opacity: 0.5
-          },
-        },
-        xaxis: {
-          categories: data.labels,
-        }
-        };
-    return options;
-  }
-
 </script>
 
 <div
   id="message-container"
-  class="flex flex-col flex-1 gap-2 overflow-y-auto rounded-lg"
+  class="flex flex-col flex-1 gap-2 overflow-y-auto rounded-lg border-[3px]"
   bind:this={messageContainer}
 >
   {#if $messages !== null}
