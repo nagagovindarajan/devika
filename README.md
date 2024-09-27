@@ -184,3 +184,11 @@ We hope you find Devika to be a valuable tool in your software development journ
 
 ## UI Updates
 npm install svelte-apexcharts apexcharts
+
+
+## Open Web UI
+docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+https://github.com/open-webui/open-webui
+
+for podman as docker 
+docker run -d -p 3000:8080 --add-host=host.containers.internal:192.168.10.53 -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main

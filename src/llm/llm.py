@@ -11,6 +11,7 @@ from .openai_client import OpenAi
 from .gemini_client import Gemini
 from .mistral_client import MistralAi
 from .groq_client import Groq
+from .lm_studio_client import LMStudio
 
 from src.state import AgentState
 
@@ -37,12 +38,15 @@ class LLM:
                 ("Claude 3 Haiku", "claude-3-haiku-20240307"),
             ],
             "OPENAI": [
+                ("GPT-4o-mini", "gpt-4o-mini"),
                 ("GPT-4o", "gpt-4o"),
                 ("GPT-4 Turbo", "gpt-4-turbo"),
                 ("GPT-3.5 Turbo", "gpt-3.5-turbo-0125"),
             ],
             "GOOGLE": [
                 ("Gemini 1.0 Pro", "gemini-pro"),
+                ("Gemini 1.5 Flash", "gemini-1.5-flash"),
+                ("Gemini 1.5 Pro", "gemini-1.5-pro"),
             ],
             "MISTRAL": [
                 ("Mistral 7b", "open-mistral-7b"),
@@ -66,7 +70,11 @@ class LLM:
                 ("Claude 2", "anthropic.claude-v2"),
                 ("Claude 1.2", "anthropic.claude-instant-v1"),
             ],
-            "OLLAMA": []
+            "OLLAMA": [],
+            "LM_STUDIO": [
+                ("LM Studio", "local-model"),    
+            ]
+            
         }
         if ollama.client:
             self.models["OLLAMA"] = [(model["name"], model["name"]) for model in ollama.models]
@@ -76,8 +84,8 @@ class LLM:
 
     def model_enum(self, model_name: str) -> Tuple[str, str]:
         model_dict = {
-            model[0]: (model_enum, model[1])
-            for model_enum, models in self.models.items()
+            model[0]: (model_enum, model[1]) 
+            for model_enum, models in self.models.items() 
             for model in models
         }
         return model_dict.get(model_name, (None, None))
@@ -94,7 +102,7 @@ class LLM:
         self.update_global_token_usage(prompt, project_name)
 
         model_enum, model_name = self.model_enum(self.model_id)
-
+                
         print(f"Model: {self.model_id}, Enum: {model_enum}")
         if model_enum is None:
             raise ValueError(f"Model {self.model_id} not supported")
@@ -106,6 +114,7 @@ class LLM:
             "GOOGLE": Gemini(),
             "MISTRAL": MistralAi(),
             "GROQ": Groq(),
+            "LM_STUDIO": LMStudio(),
             "AWS_BEDROCK": AWSBedrock(),
         }
 
@@ -115,7 +124,7 @@ class LLM:
 
             start_time = time.time()
             model = model_mapping[model_enum]
-
+            
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 future = executor.submit(model.inference, model_name, prompt)
                 try:
@@ -138,7 +147,7 @@ class LLM:
                     emit_agent("inference", {"type": "error", "message": "Inference took too long. Please try again."})
                     response = False
                     sys.exit()
-
+                
                 except Exception as e:
                     logger.error(str(e))
                     response = False
