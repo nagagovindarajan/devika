@@ -22,7 +22,7 @@ GitPython
 netlify-py
 Markdown
 xhtml2pdf
-mistralai
+mistralai=0.3.0
 Flask-SocketIO
 eventlet
 groq
@@ -35,6 +35,6 @@ langchain
 langchain-chroma
 langchain-anthropic
 langchain-community
-langchain-core
+langchain-core=0.2.41
 langchain-openai
 langchain-text-splitters
