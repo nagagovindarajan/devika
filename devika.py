@@ -62,7 +62,7 @@ def data():
     project = manager.get_project_list()
     models = LLM().list_models()
     search_engines = ["Bing", "Google", "DuckDuckGo"]
-    agents = ["Default", "Dev", "Ops", "Debugger", "Researcher", "Reporter", "Tester"]
+    agents = ["Default", "Dev", "Ops", "Debugger", "Researcher", "Reporter", "Tester", "Data_Analyst"]
     return jsonify({"projects": project, "models": models, "search_engines": search_engines, "agents": agents})
 
 
@@ -114,6 +114,11 @@ def handle_message(data):
         thread = Thread(target=lambda: agent.ops_execute(message, project_name, "ops"))
         thread.start()
         emit_agent("info", {"type": "info", "message": "Ops Agent running"})
+
+    elif agent_name == "data_analyst":
+        thread = Thread(target=lambda: agent.ops_execute(message, project_name, "data_analyst"))
+        thread.start()
+        emit_agent("info", {"type": "info", "message": "Data Analyst Agent running"})
 
     # elif agent=="hcl":
     #     # ops command

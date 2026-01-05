@@ -8,6 +8,7 @@ from .answer import Answer
 from .runner import Runner
 from .debugger import Debugger
 from .ops import Ops
+from .data_analyst import DataAnalyst
 from .feature import Feature
 from .patcher import Patcher
 from .reporter import Reporter
@@ -61,6 +62,7 @@ class Agent:
         self.runner = Runner(base_model=base_model)
         self.debugger = Debugger(base_model=base_model)
         self.ops = Ops(base_model=base_model, chroma_db=ChromaDb())
+        self.analyst = DataAnalyst(base_model=base_model, chroma_db=ChromaDb())
         self.feature = Feature(base_model=base_model)
         self.patcher = Patcher(base_model=base_model)
         self.reporter = Reporter(base_model=base_model)
@@ -405,6 +407,15 @@ class Agent:
                 search_engine=self.engine
             )
             self.project_manager.add_message_from_devika(project_name, "agent_response")
+        elif agent_name == "data_analyst":
+            agent_response = self.analyst.execute(
+                conversation=conversation,
+                os_system=os_system,
+                project_path=project_path,
+                project_name=project_name,
+                search_engine=self.engine
+            )
+            self.project_manager.add_message_from_devika(project_name, agent_response)
         
         self.agent_state.set_agent_completed(project_name, True)
         self.project_manager.add_message_from_devika(

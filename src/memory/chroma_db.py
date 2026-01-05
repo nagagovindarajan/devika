@@ -1,5 +1,6 @@
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import TextLoader
+from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
@@ -38,7 +39,12 @@ class ChromaDb:
             self.db = Chroma(persist_directory=chroma_path, embedding_function=embedding_function)
         logger.info("Chroma initialized")
 
-
+    def get_text_content(self, file_path):
+        loader = TextLoader(file_path)
+        documents = loader.load()
+        file_content = documents[0].page_content
+        return file_content
+    
     def add_doc(self, doc_file_path):
         # load the document and split it into chunks
         loader = TextLoader(doc_file_path)
@@ -48,13 +54,25 @@ class ChromaDb:
         docs = self.text_splitter.split_documents(documents)
         self.db.add_documents(docs)
         logger.info(f"\nAdded document to chroma {doc_file_path}")
+    
+    def add_csv(self, csv_file_path):
+        # load the document and split it into chunks
+        loader = CSVLoader(file_path=csv_file_path)
+
+        documents = loader.load()
+
+        # split it into chunks
+        docs = self.text_splitter.split_documents(documents)
+        self.db.add_documents(docs)
+        logger.info(f"\nAdded document to chroma {csv_file_path}")
 
     def add_text(self, name, content):
         doc =  Document(
             page_content=content,
             metadata={
                 "source": name,
-                "page": 1
+                "page": 1,
+                "category": "answer"
         })
         self.db.add_documents([doc])
         logger.info(f"\nAdded content to chroma {name}")
@@ -65,7 +83,18 @@ class ChromaDb:
         if len(docs) > 0:
             result = docs[0].page_content
         return result
-    
+
+    def query_csv(self, query, source_name):
+        results =  self.db.similarity_search(
+                    query=query,
+                    k=5,  # Top 2 results
+                    filter={"source": source_name}  # Filter based on metadata
+                )
+        result = ""
+        if len(results) > 0:
+            result = results[0].page_content
+        return result
+
     def add_knowledge(self, question: str, answer: list):
         knowledge = question + '\nAnswer: '+ '\n'.join(answer)
         self.add_text(convert_to_single_word(question), knowledge)

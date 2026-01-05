@@ -43,7 +43,5 @@ class Formatter:
             chart_type_match = re.search(chart_type_pattern, response, re.DOTALL)
             if chart_type_match:
                 response_type = chart_type_match.group(1)
-                print("response_typX1 ", response_type)
             
-        print("response_typX2 ", response_type)
         return final_response, response_type

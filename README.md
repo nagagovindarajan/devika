@@ -191,4 +191,7 @@ docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-
 https://github.com/open-webui/open-webui
 
 for podman as docker 
-docker run -d -p 3000:8080 --add-host=host.containers.internal:192.168.10.53 -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+docker run -d -p 3000:8080 --add-host=host.containers.internal:192.168.50.228 -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+
+
+podman run -d -p 3000:8080 --add-host=host.containers.internal:192.168.50.228 -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
